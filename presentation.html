@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel pour Boulangers & Pâtissiers</title>
+    <style>
+        :root {
+            --font-family-display: Arial, sans-serif;
+            --font-weight-display: 600;
+            --font-family-content: Arial, sans-serif;
+            --font-weight-content: 400;
+            --font-size-content: 16px;
+            --line-height-content: 1.4;
+        }
+
+        body.theme-dark {
+            --color-bg-base: #2d1f15;
+            --color-bg-elevated: #1a0f08;
+            --color-bg-surface: #3d2f25;
+            --color-bg-muted: #4d3f35;
+            --color-text-primary: #fef5f0;
+            --color-text-secondary: #e8d5c4;
+            --color-text-muted: #b39d8f;
+            --color-text-accent: #f4a460;
+            --color-primary: #f4a460;
+            --color-primary-foreground: #2d1f15;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-content);
+            font-weight: var(--font-weight-content);
+            font-size: var(--font-size-content);
+            line-height: var(--line-height-content);
+            overflow-x: hidden;
+        }
+
+        .slide {
+            width: 960px;
+            height: 540px;
+            margin: 0 auto 20px;
+            display: flex;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .row { flex-direction: row; }
+        .col { flex-direction: column; }
+        .center {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .space-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .items-start { align-items: flex-start; }
+        .fill-width { flex: 1; }
+        .fill-height { flex: 1; display: flex; flex-direction: column; }
+
+        .gap-sm { gap: 0.5rem; }
+        .gap-md { gap: 1rem; }
+        .gap-lg { gap: 1.5rem; }
+        .gap-xl { gap: 2rem; }
+
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .p-12 { padding: 3rem; }
+        .p-16 { padding: 4rem; }
+
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-family-display);
+            font-weight: var(--font-weight-display);
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        h1 { font-size: 3rem; }
+        h2 { font-size: 2.25rem; }
+        h3 { font-size: 1.75rem; }
+        h4 { font-size: 1.5rem; }
+
+        .text-2xl { font-size: 1.5rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-base { font-size: 1rem; }
+
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .text-center { text-align: center; }
+
+        ul, ol {
+            margin-left: 2rem;
+            line-height: 1.8;
+        }
+
+        ul li { list-style: disc; }
+        li { margin-bottom: 0.75rem; }
+        li:last-child { margin-bottom: 0; }
+
+        .card-rect {
+            padding: 2rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+
+        table th {
+            background-color: #f4a460;
+            color: #2d1f15;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #e89050;
+        }
+
+        table td {
+            padding: 0.75rem;
+            border: 1px solid #4d3f35;
+            color: #e8d5c4;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #3d2f25;
+        }
+
+        .highlight { background-color: #f4a460; color: #2d1f15; font-weight: bold; }
+        .code-box {
+            background-color: #1a0f08;
+            border-left: 4px solid #f4a460;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #e8d5c4;
+            border-radius: 4px;
+        }
+
+        .emoji { margin-right: 0.5rem; }
+
+        /* ANIMATIONS ET TRANSITIONS */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Classes d'animation pour les éléments */
+        .anim-slide-left {
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .anim-slide-right {
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        .anim-slide-up {
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .anim-fade {
+            animation: fadeIn 1s ease-out;
+        }
+
+        .anim-scale {
+            animation: scaleIn 0.7s ease-out;
+        }
+
+        .anim-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .anim-bounce {
+            animation: bounce 1s ease-in-out;
+        }
+
+        /* Délais d'animation staggered pour listes */
+        ul li:nth-child(1) { animation: slideInUp 0.6s ease-out 0.1s both; }
+        ul li:nth-child(2) { animation: slideInUp 0.6s ease-out 0.2s both; }
+        ul li:nth-child(3) { animation: slideInUp 0.6s ease-out 0.3s both; }
+        ul li:nth-child(4) { animation: slideInUp 0.6s ease-out 0.4s both; }
+        ul li:nth-child(5) { animation: slideInUp 0.6s ease-out 0.5s both; }
+        ul li:nth-child(6) { animation: slideInUp 0.6s ease-out 0.6s both; }
+
+        /* Animation des cartes */
+        .card-animated {
+            animation: slideInUp 0.7s ease-out;
+        }
+
+        .card-animated:nth-child(1) { animation-delay: 0.1s; }
+        .card-animated:nth-child(2) { animation-delay: 0.3s; }
+        .card-animated:nth-child(3) { animation-delay: 0.5s; }
+
+        /* Animation des tableaux */
+        table {
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        table th {
+            animation: scaleIn 0.7s ease-out 0.3s backwards;
+        }
+
+        table td {
+            animation: fadeIn 1s ease-out;
+        }
+
+        table tr:nth-child(2) td { animation-delay: 0.2s; }
+        table tr:nth-child(3) td { animation-delay: 0.3s; }
+        table tr:nth-child(4) td { animation-delay: 0.4s; }
+        table tr:nth-child(5) td { animation-delay: 0.5s; }
+        table tr:nth-child(6) td { animation-delay: 0.6s; }
+
+        /* Transition de slide (effet fondu) */
+        .slide {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Navigation buttons */
+        .nav-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background-color: #f4a460;
+            color: #2d1f15;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            background-color: #fbbf24;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(244, 164, 96, 0.9);
+            color: #2d1f15;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            z-index: 1000;
+        }
+
+        /* Hover effects */
+        .highlight:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
+
+        .code-box {
+            transition: all 0.3s ease;
+        }
+
+        .code-box:hover {
+            background-color: #2d1f15;
+            border-left-color: #fbbf24;
+            transform: translateX(5px);
+        }
+
+        /* Animation titre slide */
+        h1, h2 {
+            animation: slideInLeft 0.7s ease-out;
+        }
+
+        /* Animation sous-titres */
+        h3, h4 {
+            animation: slideInRight 0.6s ease-out 0.2s backwards;
+        }
+
+        /* Animation paragraphes */
+        p {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        p:nth-of-type(1) { animation-delay: 0.1s; }
+        p:nth-of-type(2) { animation-delay: 0.2s; }
+        p:nth-of-type(3) { animation-delay: 0.3s; }
+
+        /* Pulse sur les éléments clés */
+        .highlight {
+            position: relative;
+        }
+
+        /* Highlight avec animation */
+        .code-box {
+            box-shadow: 0 0 0 2px rgba(244, 164, 96, 0.3);
+        }
+
+        /* Navigation script styles */
+        .slide-wrapper {
+            display: none;
+        }
+
+        .slide-wrapper.active {
+            display: block;
+        }
+    </style>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 18;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide-wrapper');
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (slides[currentSlide - 1]) {
+                slides[currentSlide - 1].classList.add('active');
+            }
+            
+            document.getElementById('current-slide').textContent = currentSlide;
+            document.getElementById('total-slides').textContent = totalSlides;
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        // Clavier : flèches gauche/droite
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        // Initialiser au chargement
+        window.addEventListener('load', () => {
+            showSlide(currentSlide);
+        });
+    </script>
+</head>
+<body class="theme-dark">
+
+    <!-- Compteur de slides -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">18</span>
+    </div>
+
+    <!-- Boutons navigation -->
+    <div class="nav-buttons">
+        <button class="nav-btn" id="prev-btn" onclick="previousSlide()">← Précédent</button>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Suivant →</button>
+    </div>
+
+    <!-- SLIDE 1 : TITRE -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col center anim-fade" style="background-color: #1a0f08; color: #fef5f0;">
+
+</CANVAS_EDIT_1>
+        <h1 class="mb-4" style="color: #f4a460;">Excel pour Boulangers & Pâtissiers</h1>
+        <h3 style="color: #e8d5c4; margin-bottom: 1rem;">Fiches Recettes & Bon d'Économat</h3>
+        <p class="text-lg mb-4" style="color: #e8d5c4;">📊 Formation pratique - 60 minutes</p>
+        <p class="text-base" style="color: #b39d8f;">Construire vos fiches recettes • Calculer coûts automatiquement • Générer des bons d'économat</p>
+        <p class="text-sm mt-8" style="color: #b39d8f;">Formateur | Apprentis Boulangerie-Pâtisserie</p>
+    </section>
+    </div>
+
+    <!-- SLIDE 2 : OBJECTIFS -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-slide-right" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-8" style="color: #f4a460;">Objectifs du Cours</h2>
+        <div class="fill-height">
+            <ul class="text-lg" style="color: #e8d5c4;">
+                <li>✓ Maîtriser une fiche recette numérique et professionnelle</li>
+                <li>✓ Calculer totaux et pourcentages <span class="highlight">automatiquement</span></li>
+                <li>✓ Ajuster productions sans recalculer manuellement</li>
+                <li>✓ Générer un bon d'économat <span class="highlight">dynamique et lié</span></li>
+                <li>✓ Sécuriser vos fichiers (formules, références)</li>
+            </ul>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 3 : POURQUOI EXCEL ? -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-slide-left" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-6" style="color: #f4a460;">Pourquoi Excel aide l'Artisan ?</h2>
+        <div class="fill-height row gap-lg">
+            <div class="fill-width card-animated" style="background-color: #3d2f25; padding: 1.5rem; border-radius: 4px;">
+
+</CANVAS_EDIT_3>
+                <h4 style="color: #f4a460; margin-bottom: 0.75rem;">💰 Contrôle des coûts</h4>
+                <p style="color: #e8d5c4; font-size: 1rem;">Suivre précisément le coût de chaque ingrédient</p>
+            </div>
+            <div class="fill-width card-animated" style="background-color: #3d2f25; padding: 1.5rem; border-radius: 4px;">
+                <h4 style="color: #f4a460; margin-bottom: 0.75rem;">🎯 Cohérence recettes</h4>
+                <p style="color: #e8d5c4; font-size: 1rem;">Vérifier dosages, ratios, rendements constants</p>
+            </div>
+            <div class="fill-width card-animated" style="background-color: #3d2f25; padding: 1.5rem; border-radius: 4px;">
+                <h4 style="color: #f4a460; margin-bottom: 0.75rem;">📈 Anticipation commandes</h4>
+                <p style="color: #e8d5c4; font-size: 1rem;">Adapter production (×1,5, ×2) en secondes</p>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 4 : CAS PRATIQUE -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-slide-up" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-6" style="color: #f4a460;">Cas Pratique : Croissants Week-end</h2>
+
+</CANVAS_EDIT_5>
+        <div class="fill-height">
+            <p class="text-lg mb-4" style="color: #e8d5c4;"><span class="highlight">Scénario :</span> Vous devez produire <span class="highlight">1,5 fois</span> plus de croissants demain.</p>
+            <p class="text-base mb-6" style="color: #e8d5c4;">
+                ✍️ Sans Excel → recalculer à la main (erreurs, temps perdu)
+                <br/>
+                ✓ Avec Excel → modifier 1 cellule → <span class="highlight">tout se recalcule</span> (ingrédients, coûts, pourcentages)
+            </p>
+            <p class="text-base mb-2" style="color: #f4a460; font-weight: bold;">Résultat : Économies de temps ET fiabilité garantie</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 5 : VOCABULAIRE EXCEL -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-slide-left" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-6" style="color: #f4a460;">Bases Excel : Vocabulaire & Structure</h2>
+        <div class="fill-height">
+            <p class="text-lg mb-4" style="color: #e8d5c4; font-weight: bold;">Les 4 éléments clés :</p>
+            <ul class="text-base" style="color: #e8d5c4; line-height: 1.9;">
+                <li><span class="highlight">📍 Cellule</span> = intersection ligne + colonne (ex : B3 = colonne B, ligne 3). C'est <span style="background-color: #3d2f25; padding: 0.25rem 0.5rem;">où on tape les données</span></li>
+                <li><span class="highlight">➡️ Ligne</span> = rangée horizontale (1, 2, 3…). Chaque ligne = 1 ingrédient dans une recette</li>
+                <li><span class="highlight">⬇️ Colonne</span> = rangée verticale (A, B, C…). Chaque colonne = 1 type d'info (nom, quantité, coût…)</li>
+                <li><span class="highlight">📑 Feuille</span> = onglet en bas de l'écran (ex : « Recette », « Économat »). 1 fichier = plusieurs feuilles</li>
+            </ul>
+            <p class="text-lg mt-6" style="color: #f4a460; font-weight: bold;">→ <span class="highlight">Formule</span> = instruction de calcul qui commence TOUJOURS par <span class="highlight">=</span></p>
+            <p class="text-base" style="color: #e8d5c4; margin-top: 0.5rem;">Exemple : <span class="code-box" style="display: inline; padding: 0.25rem 0.5rem;">=A2+B2</span> signifie « additionne la cellule A2 et B2 »</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 6 : MINI-ACTIVITÉ 1 -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-scale" style="background-color: #1a0f08; color: #fef5f0;">
+        <h2 class="mb-6" style="color: #f4a460;">⏱️ Mini-Activité (5 min)</h2>
+        <p class="text-lg mb-6" style="color: #e8d5c4; font-weight: bold;">Consigne :</p>
+        <div class="fill-height">
+            <p class="text-lg mb-4" style="color: #e8d5c4;">1️⃣ Saisissez 3 ingrédients dans colonne A (ex: Farine, Beurre, Eau)</p>
+            <p class="text-lg mb-4" style="color: #e8d5c4;">2️⃣ Saisissez leurs quantités en colonne B</p>
+            <p class="text-lg mb-4" style="color: #e8d5c4;">3️⃣ En B5, tapez la formule : <span class="code-box">=SOMME(B2:B4)</span></p>
+            <p class="text-lg mb-4" style="color: #e8d5c4;">4️⃣ Appuyez sur <span class="highlight">Entrée</span></p>
+            <p class="text-base mt-6" style="color: #f4a460; font-weight: bold;">✓ Vérifiez : le total s'affiche en B5 automatiquement !</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 7 : STRUCTURE FICHE RECETTE -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-slide-right" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-4" style="color: #f4a460;">Structure Fiche Recette</h2>
+        <div class="fill-height" style="overflow: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ingrédient</th>
+                        <th>Qté Base (g)</th>
+                        <th>Qté Ajustée (g)</th>
+                        <th>% Recette</th>
+                        <th>Coût (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Farine T55</td>
+                        <td>1000</td>
+                        <td>=B2*C$8</td>
+                        <td>=B2/$B$7</td>
+                        <td>=C2*0,25</td>
+                    </tr>
+                    <tr>
+                        <td>Beurre</td>
+                        <td>300</td>
+                        <td>=B3*C$8</td>
+                        <td>=B3/$B$7</td>
+                        <td>=C3*2,50</td>
+                    </tr>
+                    <tr>
+                        <td>Eau</td>
+                        <td>200</td>
+                        <td>=B4*C$8</td>
+                        <td>=B4/$B$7</td>
+                        <td>=C4*0</td>
+                    </tr>
+                    <tr>
+                        <td>Levure</td>
+                        <td>10</td>
+                        <td>=B5*C$8</td>
+                        <td>=B5/$B$7</td>
+                        <td>=C5*15</td>
+                    </tr>
+                    <tr>
+                        <td>Sel</td>
+                        <td>20</td>
+                        <td>=B6*C$8</td>
+                        <td>=B6/$B$7</td>
+                        <td>=C6*0,80</td>
+                    </tr>
+                    <tr style="font-weight: bold; background-color: #f4a460; color: #2d1f15;">
+                        <td>TOTAL</td>
+                        <td>=SOMME(B2:B6)</td>
+                        <td>=SOMME(C2:C6)</td>
+                        <td>=SOMME(D2:D6)</td>
+                        <td>=SOMME(E2:E6)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- SLIDE 8 : FORMULES PAS À PAS -->
+    <section class="slide p-16 col" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-4" style="color: #f4a460;">Calculs Pas à Pas : Les 3 Formules Clés</h2>
+        <div class="fill-height">
+            <p class="text-lg mb-2" style="color: #f4a460; font-weight: bold;">1️⃣ Total quantité (B7) :</p>
+            <div class="code-box">=SOMME(B2:B6)</div>
+            <p class="text-base mb-3" style="color: #e8d5c4;">→ Additionne tous les ingrédients (1000+300+200+10+20 = 1530 g)</p>
+
+            <p class="text-lg mb-2" style="color: #f4a460; font-weight: bold;">2️⃣ Pourcentage recette (D2) :</p>
+            <div class="code-box">=B2/$B$7</div>
+            <p class="text-base mb-3" style="color: #e8d5c4;">→ Divise chaque ingrédient par le total. <span class="highlight">$B$7</span> = référence absolue (ne change pas si recopie)</p>
+
+            <p class="text-lg mb-2" style="color: #f4a460; font-weight: bold;">3️⃣ Ajustement ×1,5 (C2) :</p>
+            <div class="code-box">=B2*1,5</div>
+            <p class="text-base" style="color: #e8d5c4;">→ Multiplie la qté de base par le coefficient (ici : 1,5)</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 9 : RÉFÉRENCE ABSOLUE vs RELATIVE -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-slide-left" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-6" style="color: #f4a460;">Références Absolues vs Relatives : Comprendre la Différence</h2>
+        <div class="fill-height" style="font-size: 0.9rem;">
+            <p class="text-base mb-2" style="color: #f4a460; font-weight: bold;">📌 Référence RELATIVE (ex : B2) :</p>
+            <p class="text-base mb-4" style="color: #e8d5c4;">Quand vous <span class="highlight">recopiez</span> la formule vers le bas → la cellule <span class="highlight">se décale</span> automatiquement<br/>Exemple : B2 → B3 → B4 → B5… (elle « suit » le mouvement)<br/>💡 Utile pour copier une formule sur tous les ingrédients</p>
+
+            <p class="text-base mb-2" style="color: #f4a460; font-weight: bold;">🔒 Référence ABSOLUE (ex : $B$7) :</p>
+            <p class="text-base mb-6" style="color: #e8d5c4;">Quand vous <span class="highlight">recopiez</span> → la cellule <span class="highlight">reste exactement la même</span> ($B$7 → $B$7 → $B$7…)<br/>Le <span class="highlight">$</span> « gèle » la ligne ET la colonne<br/>💡 Parfait pour les totaux qu'on veut utiliser partout</p>
+
+            <p class="text-base mb-3" style="color: #e8d5c4; font-weight: bold;">🎯 Exemple concret :</p>
+            <div class="code-box" style="margin: 0.5rem 0; font-size: 0.85rem;">=B2/$B$7  →  Recopiée en D3, devient  =B3/$B$7  →  Puis  =B4/$B$7</div>
+            <p class="text-base" style="color: #e8d5c4;"><strong>En français :</strong> « Pour chaque ligne, divise l'ingrédient par le total »<br/>Le total ($B$7) ne change pas, mais B2, B3, B4 changent → c'est ce qu'on veut !</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 10 : FEUILLE ÉCONOMAT -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-slide-up" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-4" style="color: #f4a460;">Créer la Feuille Économat</h2>
+        <p class="text-lg mb-4" style="color: #e8d5c4;">Créez un 2e onglet nommé <span class="highlight">« Économat »</span> avec :</p>
+        <div class="fill-height" style="overflow: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ingrédient</th>
+                        <th>Qté Nécessaire (g)</th>
+                        <th>Coût Total (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>=Recette!A2</td>
+                        <td>=Recette!C2</td>
+                        <td>=Recette!E2</td>
+                    </tr>
+                    <tr>
+                        <td>=Recette!A3</td>
+                        <td>=Recette!C3</td>
+                        <td>=Recette!E3</td>
+                    </tr>
+                    <tr style="font-weight: bold; background-color: #fbbf24; color: #1a1f3a;">
+                        <td>TOTAL</td>
+                        <td>=SOMME(B2:B6)</td>
+                        <td>=SOMME(C2:C6)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="text-base mt-4" style="color: #e8d5c4;">✓ Modifiez une valeur en « Recette » → l'« Économat » se met à jour automatiquement !</p>
+    </section>
+    </div>
+
+    <!-- SLIDE 11 : MISE EN FORME PROFESSIONNELLE -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-slide-right" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-4" style="color: #f4a460;">Mise en Forme Professionnelle</h2>
+        <div class="fill-height">
+            <ul class="text-lg" style="color: #e8d5c4;">
+                <li>📝 <span class="highlight">Police</span> : Arial ou Calibri, 12–14 pt minimum pour lisibilité</li>
+                <li>🖼️ <span class="highlight">Bordures</span> : fines et claires (noir ou gris clair)</li>
+                <li>🎨 <span class="highlight">En-têtes</span> : fond couleur + texte gras + contraste</li>
+                <li>🎯 <span class="highlight">Mise en forme conditionnelle</span> : colorer % >30% en rouge/orange</li>
+                <li>🔒 <span class="highlight">Protection feuille</span> : bloquer cellules critiques (formules) pour éviter erreurs</li>
+            </ul>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 12 : MISE EN FORME CONDITIONNELLE -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-fade" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-4" style="color: #f4a460;">Mise en Forme Conditionnelle : Exemple Complet</h2>
+        <p class="text-lg mb-2" style="color: #e8d5c4; font-weight: bold;">💡 Objectif : Colorer automatiquement les ingrédients qui représentent >30% de la recette</p>
+        <p class="text-base mb-4" style="color: #e8d5c4;"><strong>Pourquoi ?</strong> Pour repérer visuellement les ingrédients dominants (farine, beurre…)</p>
+
+        <p class="text-lg mb-2" style="color: #f4a460; font-weight: bold;">🔴 Formule à utiliser :</p>
+        <div class="code-box" style="margin-bottom: 0.5rem;">=D2>0,3</div>
+        <p class="text-base mb-4" style="color: #e8d5c4;"><strong>Signifie :</strong> « Si D2 est supérieur à 0,3 (= 30%) → appliquer la couleur rouge »</p>
+
+        <p class="text-lg mb-2" style="color: #f4a460; font-weight: bold;">📋 Étapes dans Excel (pas à pas) :</p>
+        <ol class="text-base" style="color: #e8d5c4; line-height: 1.8;">
+            <li><span class="highlight">Sélectionnez</span> colonne D (toutes les cellules avec les %)</li>
+            <li>Allez au menu <span class="highlight">« Accueil »</span> ou <span class="highlight">« Format »</span></li>
+            <li>Cliquez sur <span class="highlight">« Mise en forme conditionnelle »</span> (ou « Format rules »)</li>
+            <li>Entrez la formule : <span class="code-box" style="display: inline; padding: 0.25rem 0.5rem;">=D2>0,3</span></li>
+            <li>Choisissez couleur de surbrillance (rouge ou orange) et font</li>
+            <li>Cliquez <span class="highlight">« OK »</span> → ✓ Les cellules >30% s'allument !</li>
+        </ol>
+    </section>
+    </div>
+
+    <!-- SLIDE 13 : EXERCICE 1 -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-scale" style="background-color: #1a0f08; color: #fef5f0;">
+        <h2 class="mb-4" style="color: #f4a460;">📝 Exercice 1 : Recette Brioche (15 min)</h2>
+        <div class="fill-height">
+            <p class="text-lg mb-3" style="color: #e8d5c4; font-weight: bold;">Consignes :</p>
+            <ul class="text-base" style="color: #e8d5c4;">
+                <li>Créez une fiche recette pour une <span class="highlight">Brioche</span></li>
+                <li>Ingrédients : Farine (500 g), Beurre (150 g), Œufs (3), Sucre (50 g), Levure (5 g), Sel (10 g)</li>
+                <li>Calculez totaux, pourcentages, et coûts (estimez coûts unitaires)</li>
+                <li>Formatez : bordures, en-têtes en gras, couleur</li>
+            </ul>
+            <p class="text-base mt-6" style="color: #f4a460;">Durée : 15 min | Support : partagé par formateur</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 14 : EXERCICE 2 -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-scale" style="background-color: #1a0f08; color: #fef5f0;">
+        <h2 class="mb-4" style="color: #f4a460;">📝 Exercice 2 : Ajuster Croissants ×2,5 (10 min)</h2>
+        <div class="fill-height">
+            <p class="text-lg mb-3" style="color: #e8d5c4; font-weight: bold;">Consignes :</p>
+            <ul class="text-base" style="color: #e8d5c4;">
+                <li>Reprenez la recette de croissants (ou de l'Exercice 1)</li>
+                <li>Créez colonne « Coefficient » : saisissez <span class="highlight">2,5</span></li>
+                <li>En colonne « Qté Ajustée », multipliez chaque quantité par le coefficient</li>
+                <li>Vérifiez que totaux et % se recalculent automatiquement</li>
+                <li>Testez : changez le coefficient à 3 → observez mise à jour</li>
+            </ul>
+            <p class="text-base mt-6" style="color: #f4a460;">Durée : 10 min | Objectif : comprendre la dynamique des formules</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 15 : EXERCICE 3 -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-scale" style="background-color: #1a0f08; color: #fef5f0;">
+        <h2 class="mb-4" style="color: #f4a460;">📝 Exercice 3 : Bon Économat Dynamique (15 min)</h2>
+        <div class="fill-height">
+            <p class="text-lg mb-3" style="color: #e8d5c4; font-weight: bold;">Consignes :</p>
+            <ul class="text-base" style="color: #e8d5c4;">
+                <li>Créez feuille « Économat » (nouvel onglet)</li>
+                <li>Liez données : <span class="code-box" style="display: inline;">=Recette!A2</span> pour noms, <span class="code-box" style="display: inline;">=Recette!C2</span> pour qtés</li>
+                <li>Testez : modifiez la quantité de farine en « Recette »</li>
+                <li>Vérifiez que l'« Économat » se met à jour</li>
+                <li>Bonus : formatez « Économat » (bordures, couleur en-têtes)</li>
+            </ul>
+            <p class="text-base mt-6" style="color: #f4a460;">Durée : 15 min | Objectif : maîtriser les liaisons entre feuilles</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 16 : DÉPANNAGE -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col anim-slide-right" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-4" style="color: #f4a460;">⚠️ Dépannage Erreurs Excel</h2>
+        <div class="fill-height">
+            <p class="text-lg mb-2" style="color: #f4a460; font-weight: bold;">Erreur <span class="code-box" style="display: inline;">#REF!</span> ?</p>
+            <p class="text-base mb-4" style="color: #e8d5c4;">→ Vous avez supprimé une cellule référencée. Vérifiez vos formules.</p>
+
+            <p class="text-lg mb-2" style="color: #f4a460; font-weight: bold;">Erreur <span class="code-box" style="display: inline;">#VALEUR!</span> ?</p>
+            <p class="text-base mb-4" style="color: #e8d5c4;">→ Format incorrect (ex : texte dans une cellule de nombre). Vérifiez le format.</p>
+
+            <p class="text-lg mb-2" style="color: #f4a460; font-weight: bold;">Résultat incohérent ?</p>
+            <p class="text-base mb-4" style="color: #e8d5c4;">→ Cliquez sur la cellule, vérifiez la formule dans la barre de formule (en haut).</p>
+
+            <p class="text-base" style="color: #e8d5c4;"><span class="highlight">Astuce</span> : Utilisez <span class="highlight">Ctrl+Z</span> (Cmd+Z) pour annuler.</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 17 : CONCLUSION -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col center anim-fade" style="background-color: #1a0f08; color: #fef5f0;">
+        <h2 class="mb-6" style="color: #f4a460;">Conclusion & Prochaines Étapes</h2>
+        <div class="fill-height col center" style="justify-content: center;">
+            <p class="text-xl mb-4" style="color: #e8d5c4;">✓ Vous maîtrisez maintenant :</p>
+            <ul class="text-lg" style="color: #e8d5c4; text-align: left; margin-left: 2rem;">
+                <li>Créer une fiche recette professionnelle</li>
+                <li>Automatiser calculs et ajustements</li>
+                <li>Générer un bon d'économat dynamique</li>
+            </ul>
+            <p class="text-lg mt-8 mb-4" style="color: #f4a460; font-weight: bold;">Prochaines étapes :</p>
+            <p class="text-base" style="color: #e8d5c4;">📌 Créez 1 modèle par recette réelle (croissants, pain, brioche…)</p>
+            <p class="text-base" style="color: #e8d5c4;">📌 Sauvegardez en <span class="highlight">modele_recette.xlsx</span></p>
+            <p class="text-base" style="color: #e8d5c4;">📌 Testez impression A4 (régler marges + taille police)</p>
+        </div>
+    </section>
+    </div>
+
+    <!-- SLIDE 18 : RESSOURCES & CONTACT -->
+    <div class="slide-wrapper">
+    <section class="slide p-16 col center anim-slide-up" style="background-color: #2d1f15; color: #fef5f0;">
+        <h2 class="mb-8" style="color: #f4a460;">Ressources & Support</h2>
+        <div class="fill-height col center" style="justify-content: center; gap: 1.5rem;">
+            <p class="text-lg" style="color: #e8d5c4;"><span class="highlight">📥 Fichier modèle</span> : modele_fiche_recette.xlsx (partagé)</p>
+            <p class="text-lg" style="color: #e8d5c4;"><span class="highlight">📄 Fiche mémo</span> : Formules & fonctions Excel (PDF partagé)</p>
+            <p class="text-lg" style="color: #e8d5c4;"><span class="highlight">❓ Questions ?</span> Posez directement au formateur</p>
+            <p class="text-base mt-6" style="color: #f4a460; font-weight: bold;">🎯 Objectif : créer vos 1ers modèles cette semaine !</p>
+        </div>
+    </section>
+    </div>
+
+</body>
+</html>
